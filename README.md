@@ -28,6 +28,8 @@
 | Scikit-learn|	0.24.2|
 | Seaborn|	0.11.2|
 | Tessaract|4.1.1| 
+| Tensorflow & Keras |2.8.0| 
+| Pillow |9.0.1| 
 
 It's useful to have all the frameworks used available at your local machine if you want to test it:
 
