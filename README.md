@@ -33,7 +33,7 @@
 
 It's useful to have all the frameworks used available at your local machine if you want to test it:
 
-`$ pip install -U scikit-learn numpy opencv-python pandas pyzbar seaborn pytesseract imutils pdf2image`
+`$ pip install -U scikit-learn numpy opencv-python pandas pyzbar seaborn pytesseract imutils pdf2image tensorflow`
 
 The repo already includes the tesseract executable if you are using the Windows operating system.
 
@@ -50,7 +50,9 @@ The aim of this project is to develop a functional prototype for reading, throug
 * automate the process of recognizing signatures on attendance sheets 
 * validate attendance. 
 * Validate signature and detect possible forgeries
-The application's primary goal is to identify the students that were present in each class and that have signed the attendance sheet.
+
+The application's primary goal is to identify the students that were present in each class and that have signed the attendance sheet as well as verify the legitness
+of each signature.
 
 This project will be combined with another to establish the connection of the application to the NONIO system. This means that the output of this program will be redirected to an API that will automatically register the students present in each class. That was or will be developed, in parallel, to route the data regarding the presence of the students in class to the NONIO system, so these features are not relevant in this project.
 
