@@ -1,4 +1,5 @@
 import cv2
+import os
 import utils
 import imutils
 import numpy as np
@@ -40,7 +41,7 @@ def encontraNumeroAluno(imgAluno):
         if area > max:
             max = area
             b = c
-    
+
     (x, y, w, h) = cv2.boundingRect(b)
 
     if (x != 0 and y != 0):
@@ -50,7 +51,7 @@ def encontraNumeroAluno(imgAluno):
     return roi
 
 
-def confirmaAssinatura(assinatura):
+def confirmaAssinatura(assinatura, turma, nAluno):
     #Confirma se realmente existe uma assinatura, através do seu tamanho
     assinaturaGrey = cv2.cvtColor(assinatura, cv2.COLOR_BGR2GRAY)
     notGray = cv2.bitwise_not(assinaturaGrey)
@@ -74,33 +75,48 @@ def confirmaAssinatura(assinatura):
     return coord
 
 
-def verificaAssinatura(assinatura, X_train, y_train, mlp):
+def verificaAssinatura(assinatura, X_train, y_train, mlp, turma, nAluno):
+    nAluno = nAluno.rstrip('\n')
+    try:
+        if(os.path.isdir("./turmas/" + turma + "/" + nAluno) == False):
+            print('maybe')
+            os.mkdir("./turmas/" + turma + "/" + nAluno)
+            os.mkdir("./turmas/" + turma + "_augmented/" + nAluno)
+        list = os.listdir("./turmas/" + turma + "/" + nAluno)
+        number_files = len(list)
+        #print('number of files: ' +str(number_files))
+        a = mlp.predict(vector_img)
+        if (a == 1): #so acrescenta se nao for uma falta
+            cv2.imwrite("./turmas/" + str(turma) + "/" + str(nAluno) + "/" + str(number_files) + ".jpg",assinatura)
+    except Exception as e:
+    # ... PRINT THE ERROR MESSAGE ... #
+        print(e)
+
     assinado = 0
     #recorre as transformacoes da imagem
     img_trf = utils.img_transformation(assinatura)
-    
+
     # percorre a imagem da assinatura e soma as linhas e as colunas
     sum_of_rows = np.sum(img_trf, axis = 1)
     sum_of_columns = np.sum(img_trf, axis = 0)
-    
+
     #concatena as somas e transpoe para vector
     vector_img = np.concatenate((sum_of_rows, sum_of_columns))
 
     vector_img = np.array(vector_img)[np.newaxis]
     #print("DEPOIS TRANPOSE")
     #print(vector_img.shape)
-    
+
     # standardiza os valores das somas
     vector_img = StandardScaler().fit_transform(vector_img)
-    #print(vector_img)
-    
+
     #carrega o modelo
     #mlp.fit(X_train, y_train)
     assinado = mlp.predict(vector_img)
-    
+
     #devolve a label atribuida
     print(assinado)
-    
+
     return assinado
 
 
@@ -131,26 +147,26 @@ def extraiLinhasAlunosIndividual(linhasHorizontais, roiAlunosLinhas):
     return linhasAlunosFinal
 
 
-def processaAlunos(img, X_train, y_train, mlp, count_alunos, out_ilegivel, out_incerto, out_presente, out_ausente, out_erro_num, out_problemas, codigoAula):
+def processaAlunos(img, X_train, y_train, mlp, count_alunos, out_ilegivel, out_incerto, out_presente, out_ausente, out_erro_num, out_problemas, codigoAula, turma):
     todosAlunos = []
     alunosPresentes = []
     folhaInvalida = 0
     contador = 1
 
 
+
     linhasHorizontais, linhas = folhaPresenca.filtroDeLinhas(img)
     roiAlunos, roiAlunosLinhas = folhaPresenca.encontraTabelasAlunos(img, linhas)
 
-    
     # tesseract configuration
     custom_config = r'--oem 3 --psm 6 outputbase digits'
 
     #percorre as tabelas dos alunos encontradas
     for r in range(len(roiAlunos)):
+
         linhasAlunos = extraiLinhasAlunosIndividual(linhasHorizontais, roiAlunosLinhas[r])
         larg = roiAlunos[r].shape[1]
 
-    
         for i in range(len(linhasAlunos) - 1):
             (x1, Yi, x2, y2) = linhasAlunos[i]
             (x1, y1, x2, Yf) = linhasAlunos[i + 1]
@@ -162,24 +178,28 @@ def processaAlunos(img, X_train, y_train, mlp, count_alunos, out_ilegivel, out_i
             #extrai número de aluno consoante coordenadas fixas.
             nrAluno = Aluno[int(round(altura * 0.1)):int(round(altura * 0.93)),
                 int(round(larg * 0.1)):int(round(larg * 0.29))]
-            
-            
+
             #aproximação exata ao local do número de aluno
             nrAluno = encontraNumeroAluno(nrAluno)
             nrAlunoGray = cv2.cvtColor(nrAluno, cv2.COLOR_BGR2GRAY)
-            
+
+            pytesseract.pytesseract.tesseract_cmd = r'./Tesseract-OCR/tesseract.exe'
             # utiliza o pytesseract para ler o id do aluno
+            #print('hmmmmmmmm')
             n_out = pytesseract.image_to_string(nrAlunoGray, config=custom_config)
-            
+
+
+
             #remove espaco na string obtida por ocr
             #remove pontos finais na string obtida por ocr
             n_clean = n_out.replace(' ','').replace('.','')
-            
+
+
             # pega no output do tesseract e retorna uma list com digitos apenas
             # a list e transformada em string e tem de ter tamanho 10
             n = ",".join([str(s) for s in n_clean.split() if s.isdigit()])
 
-            # se tiver tam 10 entao faz cast para inteiro    
+            # se tiver tam 10 entao faz cast para inteiro
             if len(n) == 10:
                 try:
                     numero_Aluno = int(n)
@@ -189,13 +209,11 @@ def processaAlunos(img, X_train, y_train, mlp, count_alunos, out_ilegivel, out_i
                     print("*****************************************************************")
                     out_ilegivel += 1
                     numero_Aluno = 0
-    
+
                 assinatura = Aluno[int(round(altura * 0.25)):int(round(altura * 0.94)),
                                      int(round(larg * 0.74)):int(round(larg * 0.97))]
-                
                 #usa o classificador para ver se assinatura esta presente
-                assinado = verificaAssinatura(assinatura, X_train, y_train, mlp)
-
+                assinado = verificaAssinatura(assinatura, X_train, y_train, mlp, turma, n_clean)
                 todosAlunos.append(numero_Aluno)
                 if assinado:
                     # comentado porque faz sentido apenas se ler uma folha de cada vez
@@ -219,7 +237,6 @@ def processaAlunos(img, X_train, y_train, mlp, count_alunos, out_ilegivel, out_i
         if folhaInvalida > len(todosAlunos):
             out_problemas += 1
             quit("folha com problemas")
-            
+
     count_alunos += len(todosAlunos)
     return todosAlunos, alunosPresentes, count_alunos, out_ilegivel, out_incerto, out_presente, out_ausente, out_erro_num, out_problemas
-
