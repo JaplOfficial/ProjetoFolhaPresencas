@@ -11,7 +11,7 @@
 
 
 
-#### Previous work: [GitHub](https://github.com/renatogomes17/ProjetoFolhaPresencas)
+#### Previous work: [GitHub](https://github.com/nardobap/ProjetoFolhaPresencas)
 
 ## Prerequisites
 
@@ -66,6 +66,12 @@ The program is executed from the command line:
 The program checks if the file "modelsignature.joblib" that corresponds to the model for classifying signatures exists in the directory or its subdirectories. If the file does not exist, the model is trained using the datasets - make sure they are in the root directory of the project in a folder called "input".
 
 A menu will be prompted to the user with several commands such as adding a new class to the system or validating attendance sheets. In order to choose an option the user has to type the corresponding operation number prompted in the terminal.
+
+* Type 1 do add a class to the system
+* Type 2 in order to read the attendance sheets
+* Type 3 to train a signature recognition model and detect possible forgeries
+* Type 4 to visualize the classes list
+* Type 5 to safely close the app
 
 ## Advice for use
 For a correct reading, the sheets must comply with some requirements:
