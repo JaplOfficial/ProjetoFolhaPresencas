@@ -35,8 +35,8 @@ It's useful to have all the frameworks used available at your local machine if y
 
 `$ pip install -U scikit-learn numpy opencv-python pandas pyzbar seaborn pytesseract imutils pdf2image tensorflow pillow`
 
-The repo already includes the tesseract executable if you are using the Windows operating system. All you have to do is unzip 
-the 'Tesseract-OCR' folder in the project root.
+The repo already includes the tesseract executable. If you are using the Windows operating system all you have to do is unzip 
+the 'Tesseract-OCR' folder in the project root directory.
 
 Otherwise it is required to have Tessaract installed: [Tesseract](https://tesseract-ocr.github.io/tessdoc/Home.html)
 Tesseract has some dependencies so it is recommended to read the installation manual.
@@ -44,7 +44,9 @@ Tesseract has some dependencies so it is recommended to read the installation ma
 
 ## Project description
 * Input: One or more images of attendance sheets;
-* Ouput: A .csv file with the students present in a given lesson.
+* Ouput: 
+    *  A .csv file with the students present in a given lesson.
+    *  Warnings identifying students whose signatures may not be genuine
 
 The aim of this project is to develop a functional prototype for reading, through computer vision, of attendance sheets in classes:
 * read student ID
@@ -63,6 +65,7 @@ The program is executed from the command line:
 
 The program checks if the file "modelsignature.joblib" that corresponds to the model for classifying signatures exists in the directory or its subdirectories. If the file does not exist, the model is trained using the datasets - make sure they are in the root directory of the project in a folder called "input".
 
+A menu will be prompted to the user with several commands such as adding a new class to the system or validating attendance sheets. In order to choose an option the user has to type the corresponding operation number prompted in the terminal.
 
 ## Advice for use
 For a correct reading, the sheets must comply with some requirements:
@@ -71,3 +74,4 @@ For a correct reading, the sheets must comply with some requirements:
 * Black and white
 * It should not be hole-punched
 * The absences should be marked using a horizontal line
+* In order to assure high accuracy predictions the minimum recommended amount of genuine signatures is 10
