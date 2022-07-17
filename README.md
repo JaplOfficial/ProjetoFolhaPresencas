@@ -33,7 +33,7 @@
 
 It's useful to have all the frameworks used available at your local machine if you want to test it:
 
-`$ pip install -U scikit-learn numpy opencv-python pandas pyzbar seaborn pytesseract imutils pdf2image tensorflow`
+`$ pip install -U scikit-learn numpy opencv-python pandas pyzbar seaborn pytesseract imutils pdf2image tensorflow pillow`
 
 The repo already includes the tesseract executable if you are using the Windows operating system.
 
