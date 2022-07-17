@@ -1,7 +1,7 @@
 # ProjetoFolhaPresencas
 
 ### Projecto Licenciatura DEIS-ISEC
-### Bernardo Baptista - 2018013802
+### José Lopes - 2019130541
 ***
 ## Table of Contents
 1. [Prerequisites](#project-description)
