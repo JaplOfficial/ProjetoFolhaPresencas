@@ -35,7 +35,8 @@ It's useful to have all the frameworks used available at your local machine if y
 
 `$ pip install -U scikit-learn numpy opencv-python pandas pyzbar seaborn pytesseract imutils pdf2image tensorflow pillow`
 
-The repo already includes the tesseract executable if you are using the Windows operating system.
+The repo already includes the tesseract executable if you are using the Windows operating system. All you have to do is unzip 
+the 'Tesseract-OCR' folder in the project root.
 
 Otherwise it is required to have Tessaract installed: [Tesseract](https://tesseract-ocr.github.io/tessdoc/Home.html)
 Tesseract has some dependencies so it is recommended to read the installation manual.
