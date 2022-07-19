@@ -52,7 +52,7 @@ The aim of this project is to develop a functional prototype for reading, throug
 * read student ID
 * automate the process of recognizing signatures on attendance sheets 
 * validate attendance. 
-* Validate signature and detect possible forgeries
+* validate signature and detect possible forgeries (once at least 5 genuine signatures per student have been introduced)
 
 The application's primary goal is to identify the students that were present in each class and that have signed the attendance sheet as well as verify the legitness
 of each signature.
