@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
             # Classifier
             # loads training data
-            X_train, y_train = load_training_data()
+            X_train, y_train, scaler = load_training_data()
             # creates model
             mlp = classifier_training()
 
@@ -107,7 +107,7 @@ if __name__ == '__main__':
                     continue
                 else:
                     try:
-                        todosAlunos, alunosPresentes, count_alunos, out_ilegivel, out_incerto, out_presente, out_ausente, out_erro_num, out_problemas = alunos.processaAlunos(img, X_train, y_train, mlp, count_alunos, out_ilegivel, out_incerto, out_presente, out_ausente, out_erro_num, out_problemas, codigoAula, turma)
+                        todosAlunos, alunosPresentes, count_alunos, out_ilegivel, out_incerto, out_presente, out_ausente, out_erro_num, out_problemas = alunos.processaAlunos(img, X_train, y_train, mlp,scaler, count_alunos, out_ilegivel, out_incerto, out_presente, out_ausente, out_erro_num, out_problemas, codigoAula, turma)
                         csv.criaCSVFile(alunosPresentes, codigoAula)
                         i=i+1
                     except:
@@ -153,7 +153,7 @@ if __name__ == '__main__':
             #(2019123456, 2)
             matriz_incerteza = CNN.matrizIncerteza(model, turma)
             for numero, incertos in matriz_incerteza:
-                if(incertos > 1):
+                if(incertos > 0):
                     print('O aluno ' + str(numero) + ' tem ' + str(incertos) +  ' assinaturas que demonstram alta variabilidade')
 
         elif(modo == '4'):

@@ -75,22 +75,9 @@ def confirmaAssinatura(assinatura, turma, nAluno):
     return coord
 
 
-def verificaAssinatura(assinatura, X_train, y_train, mlp, turma, nAluno):
+def verificaAssinatura(assinatura, X_train, y_train, mlp, turma, nAluno, scaler):
     nAluno = nAluno.rstrip('\n')
-    try:
-        if(os.path.isdir("./turmas/" + turma + "/" + nAluno) == False):
-            print('maybe')
-            os.mkdir("./turmas/" + turma + "/" + nAluno)
-            os.mkdir("./turmas/" + turma + "_augmented/" + nAluno)
-        list = os.listdir("./turmas/" + turma + "/" + nAluno)
-        number_files = len(list)
-        #print('number of files: ' +str(number_files))
-        a = mlp.predict(vector_img)
-        if (a == 1): #so acrescenta se nao for uma falta
-            cv2.imwrite("./turmas/" + str(turma) + "/" + str(nAluno) + "/" + str(number_files) + ".jpg",assinatura)
-    except Exception as e:
-    # ... PRINT THE ERROR MESSAGE ... #
-        print(e)
+
 
     assinado = 0
     #recorre as transformacoes da imagem
@@ -108,11 +95,30 @@ def verificaAssinatura(assinatura, X_train, y_train, mlp, turma, nAluno):
     #print(vector_img.shape)
 
     # standardiza os valores das somas
-    vector_img = StandardScaler().fit_transform(vector_img)
+    vector_img = scaler.transform(vector_img)
 
     #carrega o modelo
     #mlp.fit(X_train, y_train)
     assinado = mlp.predict(vector_img)
+
+    print(assinado)
+    print(assinado[0])
+
+
+    try:
+        if(os.path.isdir("./turmas/" + turma + "/" + nAluno) == False):
+            os.mkdir("./turmas/" + turma + "/" + nAluno)
+            os.mkdir("./turmas/" + turma + "_augmented/" + nAluno)
+        list = os.listdir("./turmas/" + turma + "/" + nAluno)
+        number_files = len(list)
+        #print('number of files: ' +str(number_files))
+
+        if (assinado == 1 or number_files == 0): #so acrescenta se nao for uma falta
+            cv2.imwrite("./turmas/" + str(turma) + "/" + str(nAluno) + "/" + str(number_files) + ".jpg",assinatura)
+    except Exception as e:
+    # ... PRINT THE ERROR MESSAGE ... #
+        print(e)
+
 
     #devolve a label atribuida
     print(assinado)
@@ -147,7 +153,7 @@ def extraiLinhasAlunosIndividual(linhasHorizontais, roiAlunosLinhas):
     return linhasAlunosFinal
 
 
-def processaAlunos(img, X_train, y_train, mlp, count_alunos, out_ilegivel, out_incerto, out_presente, out_ausente, out_erro_num, out_problemas, codigoAula, turma):
+def processaAlunos(img, X_train, y_train, mlp,scaler,  count_alunos, out_ilegivel, out_incerto, out_presente, out_ausente, out_erro_num, out_problemas, codigoAula, turma):
     todosAlunos = []
     alunosPresentes = []
     folhaInvalida = 0
@@ -185,7 +191,6 @@ def processaAlunos(img, X_train, y_train, mlp, count_alunos, out_ilegivel, out_i
 
             pytesseract.pytesseract.tesseract_cmd = r'./Tesseract-OCR/tesseract.exe'
             # utiliza o pytesseract para ler o id do aluno
-            #print('hmmmmmmmm')
             n_out = pytesseract.image_to_string(nrAlunoGray, config=custom_config)
 
 
@@ -213,7 +218,7 @@ def processaAlunos(img, X_train, y_train, mlp, count_alunos, out_ilegivel, out_i
                 assinatura = Aluno[int(round(altura * 0.25)):int(round(altura * 0.94)),
                                      int(round(larg * 0.74)):int(round(larg * 0.97))]
                 #usa o classificador para ver se assinatura esta presente
-                assinado = verificaAssinatura(assinatura, X_train, y_train, mlp, turma, n_clean)
+                assinado = verificaAssinatura(assinatura, X_train, y_train, mlp, turma, n_clean, scaler)
                 todosAlunos.append(numero_Aluno)
                 if assinado:
                     # comentado porque faz sentido apenas se ler uma folha de cada vez

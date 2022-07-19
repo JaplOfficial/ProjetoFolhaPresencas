@@ -253,30 +253,33 @@ def expande_dataset(datadir, num):
         #numFiles = len([entry for entry in os.listdir(datadir + "/" + alunos)])
         numFiles = 0
         for x in range(num):
-            file = random.choice(os.listdir(datadir + "/" + alunos + "/"))
-            im1 = Image.open(datadir + "/" + alunos + "/" + file).convert("L")
-            im1 = im1.resize((IMG_WIDTH,IMG_HEIGHT))
-            vetor_translacao = (uniform(-15, 15), uniform(-3, 3))
-            angulo = uniform(-1, 1) / 10
+            try:
+                file = random.choice(os.listdir(datadir + "/" + alunos + "/"))
+                im1 = Image.open(datadir + "/" + alunos + "/" + file).convert("L")
+                im1 = im1.resize((IMG_WIDTH,IMG_HEIGHT))
+                vetor_translacao = (uniform(-15, 15), uniform(-3, 3))
+                angulo = uniform(-1, 1) / 10
 
-            #print("Angulo : " + str(angulo))
-            #print("Translacao : " + str(vetor_translacao))
+                #print("Angulo : " + str(angulo))
+                #print("Translacao : " + str(vetor_translacao))
 
-            #print()
+                #print()
 
-            im1 = image.img_to_array(im1)
-            im1 = np.expand_dims(im1, axis = 0)
-            #image2 = tf.image.random_brightness(im1, max_delta=0.1)
-            #image2 = tf.image.random_contrast(image2, lower=0.1, upper=0.2)
-            image2 = tfa.image.transform_ops.rotate(im1, angulo)
-            image2 = tfa.image.translate(image2, vetor_translacao)
-            image2 = np.reshape(image2, (IMG_HEIGHT,IMG_WIDTH))
-            #print(datadir + "/" + alunos + "/"+ str(numFiles) + '.jpg')
-            cv2.imwrite(datadir + "_augmented/" + alunos + "/"+ str(numFiles) + '.jpg',image2)
-            #print(datadir + "/" + alunos + "/" +  str(numFiles) + '.jpg')
-            numFiles+=1
-            #imgplot = plt.imshow(image2, interpolation="nearest")
-            #plt.show()
+                im1 = image.img_to_array(im1)
+                im1 = np.expand_dims(im1, axis = 0)
+                #image2 = tf.image.random_brightness(im1, max_delta=0.1)
+                #image2 = tf.image.random_contrast(image2, lower=0.1, upper=0.2)
+                image2 = tfa.image.transform_ops.rotate(im1, angulo)
+                image2 = tfa.image.translate(image2, vetor_translacao)
+                image2 = np.reshape(image2, (IMG_HEIGHT,IMG_WIDTH))
+                #print(datadir + "/" + alunos + "/"+ str(numFiles) + '.jpg')
+                cv2.imwrite(datadir + "_augmented/" + alunos + "/"+ str(numFiles) + '.jpg',image2)
+                #print(datadir + "/" + alunos + "/" +  str(numFiles) + '.jpg')
+                numFiles+=1
+                #imgplot = plt.imshow(image2, interpolation="nearest")
+                #plt.show()
+            except:
+                print('vazio')
 
 # Funcao utilizada para estudar os dados do modelo como por exemplo as matrizes de confusao
 
