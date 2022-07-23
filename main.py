@@ -133,7 +133,7 @@ if __name__ == '__main__':
             treinar = input('Pretende treinar o modelo ? [s/n]: ')
             guardar = input('Pretende guardar o modelo para futuras validacoes ? [s/n]: ')
 
-            CNN.expande_dataset("./turmas/" + turma, 5)
+            CNN.expande_dataset("./turmas/" + turma, 50)
             ds_train, ds_validation = CNN.cria_dataset("./turmas/" + turma + '_augmented')
             ds_train = ds_train.map(CNN.normalize_img)
 
